@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components
-import GridItem from "components/Grid/GridItem.js";
-import GridContainer from "components/Grid/GridContainer.js";
-import Table from "components/Table/Table.js";
+import GridItem from "components/Grid/GridItem";
+import GridContainer from "components/Grid/GridContainer";
+import FirstTable from "components/Table/Table_dept";
+import SecondTable from "components/Table/Table_employee";
 import Card from "components/Card/Card.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader";
+import CardBody from "components/Card/CardBody";
+import { departments } from "assets/data/HR";
+import axios from "axios";
+import { Typography } from "@material-ui/core";
 
 const styles = {
   cardCategoryWhite: {
@@ -40,69 +44,85 @@ const styles = {
 };
 
 const useStyles = makeStyles(styles);
+// let department;
 
 export default function TableList() {
+  const [departmentData, setDepartmentData] = useState();
+  const [spinner, setSpinner] = useState(false);
   const classes = useStyles();
+
+  const getDeparmentData = (department) => {
+    if (department) {
+      setSpinner(true);
+      return axios
+        .get(`https://randomuser.me/api/?seed=${department}&results=10`)
+        .then((response) => {
+          setDepartmentData(response.data.results);
+          setSpinner(false);
+          console.log("From department of " + department);
+        });
+    } else {
+      setDepartmentData(null);
+    }
+  };
+
+  // const dept_title = getDeparmentData;
+  // console.log(dept_title.department);
+
+  // const employee = [];
+
+  // function read() {
+  //   for (let department of departments) {
+  //     employee.push(<p key={department}>{department}</p>);
+  //   }
+  // }
+
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Simple Table</h4>
+            <h4 className={classes.cardTitleWhite}>Department Table</h4>
             <p className={classes.cardCategoryWhite}>
-              Here is a subtitle for this table
+              You can select the department here.
             </p>
           </CardHeader>
           <CardBody>
-            <Table
+            <FirstTable
               tableHeaderColor="primary"
-              tableHead={["Name", "Country", "City", "Salary"]}
-              tableData={[
-                ["Dakota Rice", "Niger", "Oud-Turnhout", "$36,738"],
-                ["Minerva Hooper", "Curaçao", "Sinaai-Waas", "$23,789"],
-                ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
-                ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
-                ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
-                ["Mason Porter", "Chile", "Gloucester", "$78,615"],
-              ]}
+              // tableHead={departments.department}
+              tableHead={["Id", "Deparment", "Location", "Manager", "Action"]}
+              tableData={departments}
+              getDeparmentData={getDeparmentData}
             />
           </CardBody>
         </Card>
       </GridItem>
-      <GridItem xs={12} sm={12} md={12}>
+      <GridItem xs={12} sm={12} md={12} className="test">
         <Card plain>
-          <CardHeader plain color="primary">
+          <CardHeader plain color="warning">
             <h4 className={classes.cardTitleWhite}>
-              Table on Plain Background
+              Employees from <strong>{departments[3].department} </strong>
             </h4>
             <p className={classes.cardCategoryWhite}>
-              Here is a subtitle for this table
+              You can see the Detail Data
             </p>
           </CardHeader>
           <CardBody>
-            <Table
+            <Typography></Typography>
+            <SecondTable
               tableHeaderColor="primary"
-              tableHead={["ID", "Name", "Country", "City", "Salary"]}
-              tableData={[
-                ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
-                ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],
-                ["3", "Sage Rodriguez", "$56,142", "Netherlands", "Baileux"],
-                [
-                  "4",
-                  "Philip Chaney",
-                  "$38,735",
-                  "Korea, South",
-                  "Overland Park",
-                ],
-                [
-                  "5",
-                  "Doris Greene",
-                  "$63,542",
-                  "Malawi",
-                  "Feldkirchen in Kärnten",
-                ],
-                ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"],
+              tableHead={[
+                "Photo",
+                "Full Names",
+                "Gender",
+                "Country",
+                "Email",
+                "Phone",
+                "Year in the company",
               ]}
+              tableData={departmentData}
+              spinner={spinner}
             />
           </CardBody>
         </Card>

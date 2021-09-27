@@ -9,7 +9,10 @@ import {
   defaultFont,
 } from "assets/jss/material-dashboard-react.js";
 
+import checkboxAdnRadioStyle from "assets/jss/material-dashboard-react/checkboxAdnRadioStyle.js";
+
 const tableStyle = (theme) => ({
+  ...checkboxAdnRadioStyle, // for material-ui checkbox font
   warningTableHeader: {
     color: warningColor[0],
   },
